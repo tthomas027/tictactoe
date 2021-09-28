@@ -5,7 +5,7 @@ const createPlayer = (name, piece) => {
 const playerOne = createPlayer('Player X', 'X');
 const playerTwo = createPlayer('Player O', 'O');
 
-const displayController = (() => {
+const gameController = (() => {
   let playerOneTurn = true;
   
   const selectSquare = square => {
@@ -39,7 +39,7 @@ const gameBoard = (() => {
     square.classList.add('square');
     boardDisplay.appendChild(square);
     square.addEventListener('click', () => {
-      displayController.selectSquare(square);
+      gameController.selectSquare(square);
     });
   })
   
