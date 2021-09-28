@@ -2,13 +2,34 @@ const createPlayer = (name, piece) => {
   return {name, piece};
 }
 
-const playerX = createPlayer('Player X', 'X');
-const playerO = createPlayer('Player O', 'O');
+const playerOne = createPlayer('Player X', 'X');
+const playerTwo = createPlayer('Player O', 'O');
+
+const displayController = (() => {
+  let playerOneTurn = true;
+  
+  const selectSquare = square => {
+    if (square.textContent != '') {
+      return;
+    }
+    if (playerOneTurn) {
+      square.textContent = playerOne.piece;
+      playerOneTurn = false;
+    } else {
+      square.textContent = playerTwo.piece;
+      playerOneTurn = true;
+    }
+
+  };
+  return {
+    selectSquare
+  }
+})();
 
 const gameBoard = (() => {
   let board = [];
   for (let i = 0; i < 9; i++) {
-    board.push(i); // fill board with temp data
+    board.push('');
   }
 
   const boardDisplay = document.querySelector('#boardDisplay');
@@ -16,15 +37,13 @@ const gameBoard = (() => {
   board.forEach(element => {
     const square = document.createElement('div');
     square.classList.add('square');
-    square.textContent = element; // display temp data
     boardDisplay.appendChild(square);
+    square.addEventListener('click', () => {
+      displayController.selectSquare(square);
+    });
   })
   
   return {
     board
   };
-})();
-
-const displayController = (() => {
-
 })();
