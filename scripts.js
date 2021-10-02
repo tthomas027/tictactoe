@@ -7,22 +7,59 @@ const playerTwo = createPlayer('Player O', 'O');
 
 const gameController = (() => {
   let playerOneTurn = true;
+  let movesPlayed = 0;
+
+  const winningMoves = [
+    [0,1,2],
+    [3,4,5],
+    [6,7,8],
+    [0,3,6],
+    [1,4,7],
+    [2,5,8],
+    [0,4,8],
+    [2,4,6]
+  ];
   
-  const selectSquare = square => {
-    if (square.textContent != '') {
+  const selectSquare = index => {
+    if (gameBoard.board[index] != '') {
+      return;
+    }
+    if (movesPlayed >= 8) {
       return;
     }
     if (playerOneTurn) {
-      square.textContent = playerOne.piece;
+      gameBoard.board[index]= playerOne.piece;
       playerOneTurn = false;
     } else {
-      square.textContent = playerTwo.piece;
+      gameBoard.board[index] = playerTwo.piece;
       playerOneTurn = true;
     }
+    movesPlayed++;
+    checkWinner();
+  };
+  const update = () => {
+    const boardDisplay = document.querySelector('#boardDisplay');
 
+    Array.from(boardDisplay.children).forEach((square, index) => {
+      square.textContent = gameBoard.board[index];
+    })
+  };
+  const checkWinner = () => {
+    winningMoves.forEach((combination) => {
+      if (gameBoard.board[combination[0]] == playerOne.piece && 
+        gameBoard.board[combination[1]] == playerOne.piece &&
+        gameBoard.board[combination[2]] == playerOne.piece) {
+            console.log('Player One wins!')
+      } else if (gameBoard.board[combination[0]] == playerTwo.piece && 
+        gameBoard.board[combination[1]] == playerTwo.piece &&
+        gameBoard.board[combination[2]] == playerTwo.piece) {
+          console.log('Player Two wins!')
+      }
+    });
   };
   return {
-    selectSquare
+    selectSquare,
+    update
   }
 })();
 
@@ -34,12 +71,13 @@ const gameBoard = (() => {
 
   const boardDisplay = document.querySelector('#boardDisplay');
 
-  board.forEach(element => {
+  board.forEach((element, index) => {
     const square = document.createElement('div');
     square.classList.add('square');
     boardDisplay.appendChild(square);
     square.addEventListener('click', () => {
-      gameController.selectSquare(square);
+      gameController.selectSquare(index);
+      gameController.update();
     });
   })
   
