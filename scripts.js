@@ -8,6 +8,13 @@ const playerTwo = createPlayer('Player O', 'O');
 const gameController = (() => {
   let playerOneTurn = true;
   let movesPlayed = 0;
+  let gameOver = false;
+  const reset = document.querySelector('#reset');
+  const result = document.querySelector('#result');
+
+  reset.addEventListener('click', () => {
+    resetGame();
+  });
 
   const winningMoves = [
     [0,1,2],
@@ -21,10 +28,7 @@ const gameController = (() => {
   ];
   
   const selectSquare = index => {
-    if (gameBoard.board[index] != '') {
-      return;
-    }
-    if (movesPlayed >= 8) {
+    if (gameBoard.board[index] != '' || gameOver) {
       return;
     }
     if (playerOneTurn) {
@@ -45,18 +49,39 @@ const gameController = (() => {
     })
   };
   const checkWinner = () => {
+    const result = document.querySelector('#result');
+    if (movesPlayed > 8) {
+      result.textContent = "It's a tie!";
+      gameOver = true;
+      reset.style.display = 'block';
+      return;
+    }
     winningMoves.forEach((combination) => {
       if (gameBoard.board[combination[0]] == playerOne.piece && 
         gameBoard.board[combination[1]] == playerOne.piece &&
         gameBoard.board[combination[2]] == playerOne.piece) {
-            console.log('Player One wins!')
+          result.textContent = 'Player One wins!';
+          gameOver = true;
+          reset.style.display = 'block';
       } else if (gameBoard.board[combination[0]] == playerTwo.piece && 
         gameBoard.board[combination[1]] == playerTwo.piece &&
         gameBoard.board[combination[2]] == playerTwo.piece) {
-          console.log('Player Two wins!')
+          result.textContent ='Player Two wins!';
+          gameOver = true;
+          reset.style.display = 'block';
       }
     });
   };
+  const resetGame = () => {
+    result.textContent = '';
+    gameOver = false;
+    movesPlayed = 0;
+    for (let i = 0; i < 9; i++) {
+      gameBoard.board[i] = '';
+    }
+    update();
+    reset.style.display = 'none';
+  }
   return {
     selectSquare,
     update
